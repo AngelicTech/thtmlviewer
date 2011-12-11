@@ -145,18 +145,17 @@ type
   end;
 
 const
-  EofChar     = #0;
-  TabChar     = #9;
-  LfChar      = #10;
-  FfChar      = #12;
-  CrChar      = #13;
-  SpcChar     = ' ';
-  DotChar     = '.';
-  LessChar    = '<';
-  MinusChar   = '-';
-  GreaterChar = '>';
-  PercentChar = '%';
-  AmperChar   = '&';
+  EofChar     = ThtChar(#0);
+  TabChar     = ThtChar(#9);
+  LfChar      = ThtChar(#10);
+  CrChar      = ThtChar(#13);
+  SpcChar     = ThtChar(' ');
+  DotChar     = ThtChar('.');
+  LessChar    = ThtChar('<');
+  MinusChar   = ThtChar('-');
+  GreaterChar = ThtChar('>');
+  PercentChar = ThtChar('%');
+  AmperChar   = ThtChar('&');
 
 
 {$ifdef LCL}
@@ -255,13 +254,9 @@ function TransparentStretchBlt(DstDC: HDC; DstX, DstY, DstW, DstH: Integer;
   MaskY: Integer): Boolean;
 {$endif}
 
-procedure htAppendChr(var Dest: ThtString; C: ThtChar); {$ifdef UseInline} inline; {$endif}
-procedure htAppendStr(var Dest: ThtString; const S: ThtString); {$ifdef UseInline} inline; {$endif}
+
 function htLowerCase(Str: ThtString): ThtString; {$ifdef UseInline} inline; {$endif}
 function htUpperCase(Str: ThtString): ThtString; {$ifdef UseInline} inline; {$endif}
-
-function IsAlpha(Ch: ThtChar): Boolean; {$ifdef UseInline} inline; {$endif}
-function IsDigit(Ch: ThtChar): Boolean; {$ifdef UseInline} inline; {$endif}
 
 //{$ifdef UnitConstsMissing}
 //const
@@ -488,37 +483,7 @@ begin
 end;
 
 {$endif TransparentStretchBltMissing}
-//-- BG ---------------------------------------------------------- 27.03.2011 --
-procedure htAppendChr(var Dest: ThtString; C: ThtChar);
-begin
-  SetLength(Dest, Length(Dest) + 1);
-  Dest[Length(Dest)] := C;
-end;
 
-//-- BG ---------------------------------------------------------- 27.03.2011 --
-procedure htAppendStr(var Dest: ThtString; const S: ThtString);
-var
-  L, N: Integer;
-begin
-  L := Length(S);
-  if L > 0 then
-  begin
-    N := Length(Dest);
-    SetLength(Dest, N + L);
-    Move(S[1], Dest[N + 1], L * sizeof(ThtChar));
-  end;
-end;
-
-//-- BG ---------------------------------------------------------- 28.01.2011 --
-function htLowerCase(Str: ThtString): ThtString;
-begin
-  {$ifdef UNICODE}
-    Result := LowerCase(Str);
-  {$else}
-    Result := Str;
-    CharLowerBuffW(@Result[1], Length(Result));
-  {$endif}
-end;
 
 //-- BG ---------------------------------------------------------- 28.01.2011 --
 function htUpperCase(Str: ThtString): ThtString;
@@ -531,26 +496,16 @@ begin
   {$endif}
 end;
 
-//-- BG ---------------------------------------------------------- 21.08.2011 --
-function IsAlpha(Ch: ThtChar): Boolean; {$ifdef UseInline} inline; {$endif}
-begin
-  case Ch of
-    'a'..'z', 'A'..'Z':
-      Result := True;
-  else
-    Result := False;
-  end;
-end;
 
-//-- BG ---------------------------------------------------------- 21.08.2011 --
-function IsDigit(Ch: ThtChar): Boolean; {$ifdef UseInline} inline; {$endif}
+//-- BG ---------------------------------------------------------- 28.01.2011 --
+function htLowerCase(Str: ThtString): ThtString;
 begin
-  case Ch of
-    '0'..'9':
-      Result := True;
-  else
-    Result := False;
-  end;
+  {$ifdef UNICODE}
+    Result := LowerCase(Str);
+  {$else}
+    Result := Str;
+    CharLowerBuffW(@Result[1], Length(Result));
+  {$endif}
 end;
 
 { ThtEdit }
